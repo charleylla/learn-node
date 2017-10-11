@@ -4,27 +4,17 @@ const express = require("express")
 const router = express.Router();
 let charley = {name:"charley",age:23};
 
-/**
- * 也可以使用 route 方法接受请求，然后根据不同的请求类型进行处理，方便做出 restful 风格的 api
- */
-router.route("/charley")
-    // 使用 get 请求时获取人物信息
-    .get((req,res,next) =>{
-        res.json({
-            code:0,
-            msg:"success",
-            user:charley
-        })
-    })
-    // 使用 post 请求时修改人物信息
-    .post((req,res,next) =>{
-        const { name,age } = req.body;
-        charley.name = name;
-        charley.age = age;
-        res.json({
-            code:0,
-            msg:"success"
-        })
-    })
+router.get("/",mid1,mid2);
+// 这里定义了两个中间件，它们之间使用 next 跳转
+function mid1(req,res,next){
+    console.log("user.mid1")
+    next()
+}
+
+function mid2(req,res,next){
+    console.log("user.mid2")
+    // 在对本路由配置的最后一个中间件使用 next 跳转时，将会跳转到下一个路由配置（user2）的第一个中间件中
+    next();
+}
 
 module.exports = router;

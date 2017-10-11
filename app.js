@@ -19,14 +19,12 @@ app.use(bodyParser.urlencoded({extended:true}));
 
 // 引入路由文件
 const user = require("./router/user")
+const user2 = require("./router/user2")
 /**
- * 
- * 我们可以使用 router 对象，来定义某部分的路由，可以让我们的程序更加模块化
- * 我们可以指定，对某个路径下的路由，采用什么样的路由配置进行处理
- * 这里我们指定了 router 文件夹下的 user 模块，该模块专门用来对 user 相关的操作进行处理
- * 注意，在 user 模块中，/ 代表的不再是站点的根目录，而是 /user 
+ * 我们也可以为一个路由路径指定多个路由的配置，就像使用中间件一样
+ * 在这些路由配置之间，同样可以写一些中间件，这些中间件之间使用 next 进行跳转
  */
-app.use("/user",user);
+app.use("/user",user,user2);
 
 
 app.listen(8080,()=>{
