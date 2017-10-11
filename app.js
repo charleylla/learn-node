@@ -17,9 +17,22 @@ const bodyParser = require("body-parser");
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
 
-app.post("/upload",(req,res) =>{
-    console.log(req.body)
-    res.json({code:0,status:200})
+/**
+ * to handle http request,you can also use app.use method
+ * this method can receive all kinds of requests,such as GET/POST/PUT/PATCH...
+ * for example.if you open a get request,the following code will return {code:1,requestMethod:"GET"}
+ * if you open a patch request,the following code will return {code:1,requestMethod:"PATCH"}
+ * if you want to handle a post request,you can also use req.body to get post data
+ */
+app.use("/",(req,res) =>{
+    const requestMethod = req.method;
+    if(Object.is(requestMethod,"POST")){
+        console.log(req.body)
+    }
+    res.json({
+        code:1,
+        requestMethod
+    })
 })
 
 app.listen(8080,()=>{
