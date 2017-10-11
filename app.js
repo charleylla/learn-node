@@ -18,22 +18,35 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
 
 /**
- * to handle http request,you can also use app.use method
- * this method can receive all kinds of requests,such as GET/POST/PUT/PATCH...
- * for example.if you open a get request,the following code will return {code:1,requestMethod:"GET"}
- * if you open a patch request,the following code will return {code:1,requestMethod:"PATCH"}
- * if you want to handle a post request,you can also use req.body to get post data
+ * app.use method can also receive functions as parameter,these functions are called middleware
+ * each middleware function can receive 3 parameters:parameter request,parameter response and parameter next
+ * the "next" parameter is used to  switch to next middleware function,and it's a function
+ * if you don't call "next" function,HTTP requests cannot be dispatched to next middleware function.
+ * in each middleware function,parameter request keeps same,they are the same javascript object
+ * you don't need to transfer them manually,express has done it. 
  */
-app.use("/",(req,res) =>{
-    const requestMethod = req.method;
-    if(Object.is(requestMethod,"POST")){
-        console.log(req.body)
-    }
+ 
+ let tmp;
+
+app.use("/",mid1,mid2);
+function mid1(req,res,next){
+    tmp = req;
+    console.log("Handle request in mid1")
+    next()
+}
+
+function mid2(req,res,next){
+    console.log("Handle request in mid2")
+    /**
+     * this returns true
+     * that is,in each middleware function,the parameter request is the same javascript object.
+     */
+    console.log(Object.is(tmp,req))
     res.json({
         code:1,
-        requestMethod
+        msg:"success"
     })
-})
+}
 
 app.listen(8080,()=>{
     console.log(`server listening at port 8080`)
