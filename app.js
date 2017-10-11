@@ -17,37 +17,31 @@ const bodyParser = require("body-parser");
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
 
-/**
- * 所有的请求方式都可以中间件，如 GET/POST/PATCH 等，app 上的这些方法都可以使用中间件，不只是 app.use 才可以使用中间件
- */
-app.get("/",mid1,mid2);
-
-function mid1(req,res,next){
-    console.log("middleware 1")
-    // next({msg:"发生错误啦~"})
-    next()
-}
-
-function mid2(req,res,next){
-    console.log("middleware 2")
-    res.json({
-        code:1,
-        msg:"success",
+app.get("/",(req,res,next) =>{
+    next({
+        msg:"发生错误了"
     })
-}
+})
 
 /**
- * 测试了一下，错误中间件好像必须使用 use 来进行定义，无法使用 GET 等进行定义
+ * 对于错误处理中间件，不止可以定义一个，可以定义多个错误处理中间件
+ * 在错误处理中间件中进行控制权转移时，同样需要在 next 函数中传入非空和非 "route" 的参数
+ * 总之，要想控制权流入到（下一个）错误处理中间件中，就必须在 next 函数中传入非空和非 "route" 的参数。
  */
-
 app.use((err,req,res,next) =>{
-    console.log(err)
-    res.status(404);
     res.json({
         code:-1,
         message:err.msg
     })
+    next(err)
+    // next()
+    // next("route")
 })
+
+app.use((err,req,res,next) =>{
+    console.log(err)
+    console.log("这里可以做其他的事情~")
+})    
 
 app.listen(8080,()=>{
     console.log(`server listening at port 8080`)
