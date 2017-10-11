@@ -25,4 +25,15 @@ function mid2(req,res,next){
     next();
 }
 
+/**
+ * 除了跳转到全局错误处理中间件，还可以在路由配置中任意声明中间件
+ * 也可以在 user2 中进行声明
+ * 错误中间件的跳转顺序为：当前路由配置的错误处理中间件 -> 下一个路由配置的错误处理中间件 -> 全局的错误处理配置中间件
+ * 要从一个错误处理中间件跳转到另一个错误处理中间件，调用 next 方法，传入非空或者非 "router" 参数即可。
+ */
+router.use((err,req,res,next) =>{
+    console.log("xxxx")
+    next(err)
+})
+
 module.exports = router;
