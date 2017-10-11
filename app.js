@@ -24,13 +24,15 @@ app.use(bodyParser.urlencoded({extended:true}));
  * if you don't call "next" function,HTTP requests cannot be dispatched to next middleware function.
  * in each middleware function,parameter request keeps same,they are the same javascript object
  * you don't need to transfer them manually,express has done it. 
+ * but the parameter response are not same. 
  */
  
- let tmp;
+ let tmpRequest,tmpResponse;
 
 app.use("/",mid1,mid2);
 function mid1(req,res,next){
-    tmp = req;
+    tmpRequest = req;
+    tmpResponse = res;
     console.log("Handle request in mid1")
     next()
 }
@@ -40,8 +42,10 @@ function mid2(req,res,next){
     /**
      * this returns true
      * that is,in each middleware function,the parameter request is the same javascript object.
+     * and the parameter response are not the same.
      */
-    console.log(Object.is(tmp,req))
+    console.log(Object.is(tmpRequest,req)) // true
+    console.log(Object.is(tmpResponse,req)) // false
     res.json({
         code:1,
         msg:"success"
