@@ -19,12 +19,7 @@ app.use(bodyParser.urlencoded({extended:true}));
 
 // 引入路由文件
 const user = require("./router/user")
-const user2 = require("./router/user2")
-/**
- * 我们也可以为一个路由路径指定多个路由的配置，就像使用中间件一样
- * 在这些路由配置之间，同样可以写一些中间件，这些中间件之间使用 next 进行跳转
- */
-app.use("/user",user,user2);
+app.use("/user",user);
 
 app.use((err,req,res,next) =>{
     console.log(err)
