@@ -17,33 +17,17 @@ const bodyParser = require("body-parser");
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
 
-app.get("/",myMiddleWare({ upper:true }))
-
+// 引入路由文件
+const user = require("./router/user")
 /**
- * 如果使用闭包的形式写中间件，就可以对中间件进行配置
- * 比如，可以接收一些参数，在函数中进行处理后，根据参数决定中间件的行为
- * 例如 body-parser 中间件就是采用的这种方式。
+ * 
+ * 我们可以使用 router 对象，来定义某部分的路由，可以让我们的程序更加模块化
+ * 我们可以指定，对某个路径下的路由，采用什么样的路由配置进行处理
+ * 这里我们指定了 router 文件夹下的 user 模块，该模块专门用来对 user 相关的操作进行处理
+ * 注意，在 user 模块中，/ 代表的不再是站点的根目录，而是 /user 
  */
-function myMiddleWare(options = {}){
-    // 从配置参数中解析指令
-    const { upper } = options; 
-    const name = "charley";
-    let returnValue = {};
-    // 根据指定决定相应的返回数据
-    if(upper){
-        returnValue = {
-            name:name.toUpperCase(),
-        }
-    }else{
-        returnValue = {
-            name:name.toLowerCase(),
-        }
-    }
-    // 返回一个闭包函数，这是真正的中间件处理函数
-    return (req,res,next) =>{
-        res.json(returnValue);
-    }
-}
+app.use("/user",user);
+
 
 app.listen(8080,()=>{
     console.log(`server listening at port 8080`)
