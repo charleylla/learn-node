@@ -27,25 +27,25 @@ app.use(bodyParser.urlencoded({extended:true}));
  * but the parameter response are not same. 
  */
  
- let tmpRequest,tmpResponse;
 
-app.use("/",mid1,mid2);
+
+ /**
+  * 关于中间件函数的位置，可以有很多种写法，下面这些写法都是可以的~
+  */
+// app.use("/",mid1,mid2);
+// app.use("/",[mid1,mid2]);
+// app.use("/",[mid1],mid2);
+app.use("/",[mid1],[mid2]);
+// ..... 还有其他很多写法
+
+
 function mid1(req,res,next){
-    tmpRequest = req;
-    tmpResponse = res;
     console.log("Handle request in mid1")
     next()
 }
 
 function mid2(req,res,next){
     console.log("Handle request in mid2")
-    /**
-     * this returns true
-     * that is,in each middleware function,the parameter request is the same javascript object.
-     * and the parameter response are not the same.
-     */
-    console.log(Object.is(tmpRequest,req)) // true
-    console.log(Object.is(tmpResponse,req)) // false
     res.json({
         code:1,
         msg:"success"
