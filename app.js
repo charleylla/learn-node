@@ -27,28 +27,25 @@ app.use(bodyParser.urlencoded({extended:true}));
  * but the parameter response are not same. 
  */
  
-
-
- /**
-  * 关于中间件函数的位置，可以有很多种写法，下面这些写法都是可以的~
-  */
-// app.use("/",mid1,mid2);
-// app.use("/",[mid1,mid2]);
-// app.use("/",[mid1],mid2);
-app.use("/",[mid1],[mid2]);
-// ..... 还有其他很多写法
-
+app.use("/",mid1,mid2);
 
 function mid1(req,res,next){
-    console.log("Handle request in mid1")
+    let user = {};
+    if(Object.is(req.method,"POST")){
+        user.username = req.body.username;
+        user.password = req.body.password;
+    }
+    // 将 user 对象挂在到 req 上，就可以在后面的中间件中依次使用这些对象
+    // 也可以使用全局对象，但是总归不太好，通过将数据挂在到 req 上，可以减少全局变量的使用
+    req.user = user;
     next()
 }
 
 function mid2(req,res,next){
-    console.log("Handle request in mid2")
+    console.log(req.user)
     res.json({
         code:1,
-        msg:"success"
+        msg:"success",
     })
 }
 
