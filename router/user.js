@@ -2,32 +2,39 @@
 const express = require("express")
 // 创建一个 router 实例，所有的请求都挂载到这个实例上
 const router = express.Router();
-/**
- * 下面定义了几个用户操作的接口：
- * 1.获取用户列表
- * 2.新建用户
- * 3.获取某个用户
- * 4.修改某个用户
- * 
- * 在请求 /user 路径下的接口是，会在本路由配置中处理
- */
+// 引入 User 模型类
+const UserModel = require("../model/user");
+// 新建 User 模型对象，用来对数据进行增删改查的操作
+const User = new UserModel();
+
 router.route("/")
     .get((req,res) =>{
-        res.send("尝试获取用户列表")
+        const users = User.getUsersList();
+        res.send(users)
     })
     .post((req,res) =>{
         const { username,password } = req.body;
-        res.send(`尝试新建用户，用户名：${username}，用户密码：${password}`)
+        User.createNewUser({ username,password });
+        res.send({
+            code:1,
+            message:"新增用户成功"
+        })
     })
 
 router.route("/:id")
     .get((req,res) =>{
         const userid = req.params.id;
-        res.send(`尝试获取用户：${userid}`)
+        const user = User.getUserInfo(userid);
+        res.send(user)
     })
     .patch((req,res) =>{
         const userid = req.params.id;
-        res.send(`尝试修改用户：${userid}`)
+        const { username,password } = req.body;
+        User.modifyUserInfo(userid,{ username,password })
+        res.send({
+            code:1,
+            message:"修改用户成功"
+        })
     })
 
 
