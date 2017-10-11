@@ -26,6 +26,13 @@ const user2 = require("./router/user2")
  */
 app.use("/user",user,user2);
 
+app.use((err,req,res,next) =>{
+    console.log(err)
+    res.json({
+        code:-1,
+        message:err.msg,
+    })
+})
 
 app.listen(8080,()=>{
     console.log(`server listening at port 8080`)
