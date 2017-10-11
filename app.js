@@ -17,31 +17,33 @@ const bodyParser = require("body-parser");
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
 
-app.get("/",(req,res,next) =>{
-    next({
-        msg:"发生错误了"
-    })
-})
+app.get("/",myMiddleWare({ upper:true }))
 
 /**
- * 对于错误处理中间件，不止可以定义一个，可以定义多个错误处理中间件
- * 在错误处理中间件中进行控制权转移时，同样需要在 next 函数中传入非空和非 "route" 的参数
- * 总之，要想控制权流入到（下一个）错误处理中间件中，就必须在 next 函数中传入非空和非 "route" 的参数。
+ * 如果使用闭包的形式写中间件，就可以对中间件进行配置
+ * 比如，可以接收一些参数，在函数中进行处理后，根据参数决定中间件的行为
+ * 例如 body-parser 中间件就是采用的这种方式。
  */
-app.use((err,req,res,next) =>{
-    res.json({
-        code:-1,
-        message:err.msg
-    })
-    next(err)
-    // next()
-    // next("route")
-})
-
-app.use((err,req,res,next) =>{
-    console.log(err)
-    console.log("这里可以做其他的事情~")
-})    
+function myMiddleWare(options = {}){
+    // 从配置参数中解析指令
+    const { upper } = options; 
+    const name = "charley";
+    let returnValue = {};
+    // 根据指定决定相应的返回数据
+    if(upper){
+        returnValue = {
+            name:name.toUpperCase(),
+        }
+    }else{
+        returnValue = {
+            name:name.toLowerCase(),
+        }
+    }
+    // 返回一个闭包函数，这是真正的中间件处理函数
+    return (req,res,next) =>{
+        res.json(returnValue);
+    }
+}
 
 app.listen(8080,()=>{
     console.log(`server listening at port 8080`)
